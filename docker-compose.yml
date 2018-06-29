@@ -1,0 +1,43 @@
+version: "3"
+
+networks:
+    backend:
+
+services:
+  api:
+    container_name: "testapi"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: testapi
+    ports:
+        - "8080:8080"
+    networks:
+        - backend
+    depends_on:
+      - db
+
+  db:
+    container_name: "testapi_db"
+    image: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: dbname
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    networks:
+      - backend
+
+  pma:
+    container_name: "testapi_pma"
+    image: phpmyadmin/phpmyadmin
+    environment:
+      MYSQL_USERNAME: root
+      MYSQL_ROOT_PASSWORD: root
+      MAX_UPLOAD: "512M"
+    networks:
+      - backend
+    ports:
+      - "8081:80"
+    depends_on:
+      - db
